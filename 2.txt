@@ -1,0 +1,19 @@
+#!/bin/bash
+
+HOST=example.com
+PORT=80
+TO_ADDRESS=your.email@example.com
+FROM_ADDRESS=server@example.com
+SUBJECT="Telnet Test Ping Result"
+
+if telnet $HOST $PORT </dev/null 2>&1 | grep -q "Connected"; then
+    echo "Connection successful"
+else
+    echo "Connection failed"
+    echo "Sending email to $TO_ADDRESS"
+    echo "From: $FROM_ADDRESS" > /tmp/email.txt
+    echo "To: $TO_ADDRESS" >> /tmp/email.txt
+    echo "Subject: $SUBJECT" >> /tmp/email.txt
+    echo "Telnet test ping to $HOST:$PORT failed" >> /tmp/email.txt
+    sendmail -t < /tmp/email.txt
+fi
