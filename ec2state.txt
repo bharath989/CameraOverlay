@@ -1,0 +1,22 @@
+import boto3
+
+def lambda_handler(event, context):
+    # create EC2 client
+    ec2 = boto3.client('ec2')
+    
+    # get instance ID from event data
+    instance_id = event['instance_id']
+    
+    # describe instance status
+    response = ec2.describe_instance_status(
+        InstanceIds=[instance_id]
+    )
+    
+    # extract instance state
+    state = response['InstanceStatuses'][0]['InstanceState']['Name']
+    
+    # return state
+    return {
+        'instance_id': instance_id,
+        'state': state
+    }
