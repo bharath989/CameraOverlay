@@ -1,0 +1,40 @@
+import requests
+import json
+import smtplib
+
+# Set variables
+email_recipient = "youremail@example.com"
+json_key = "status"
+expected_value = "true"
+
+# URLs to check
+urls = [
+    "https://api.example.com/service1",
+    "https://api.example.com/service2",
+    "https://api.example.com/service3"
+]
+
+# Function to check JSON value
+def check_json_value(url):
+    # Get JSON response from cURL command
+    response = requests.get(url)
+
+    # Extract JSON value
+    value = json.loads(response.text)[json_key]
+
+    # Check if value matches expected value
+    if value != expected_value:
+        return False
+    else:
+        return True
+
+# Loop through URLs and check JSON value
+for url in urls:
+    if not check_json_value(url):
+        # Value is false, send email
+        message = f"Value for {json_key} in {url} is not {expected_value}"
+        smtp_server = smtplib.SMTP('smtp.gmail.com', 587)
+        smtp_server.starttls()
+        smtp_server.login('youremail@gmail.com', 'yourpassword')
+        smtp_server.sendmail('youremail@gmail.com', email_recipient, message)
+        smtp_server.quit()
