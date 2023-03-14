@@ -1,0 +1,6 @@
+mongo --eval "db.adminCommand('ping')" >/dev/null 2>&1
+if [ $? -eq 0 ]; then
+    echo "MongoDB is running!"
+else
+    echo "MongoDB is not running."
+fi
