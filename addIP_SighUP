@@ -1,0 +1,13 @@
+import subprocess
+
+# Set the path to the Selenoid GGR quota file
+quota_file_path = "/path/to/ggr/quota/file"
+
+# Set the IP address you want to add to the quota file
+ip_address = "192.168.1.100"
+
+# Construct the sed command to append the IP address to the quota file
+sed_command = f"echo '{ip_address} 1' >> {quota_file_path}"
+
+# Run the sed command using subprocess
+subprocess.run(sed_command, shell=True)
