@@ -1,0 +1,13 @@
+import subprocess
+
+# Set the shell command to run
+cmd = "ls -l"
+
+# Run the shell command and capture the output
+output = subprocess.check_output(cmd, shell=True)
+
+# Decode the output from bytes to string
+output_str = output.decode('utf-8')
+
+# Print the output
+print(output_str)
