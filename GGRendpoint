@@ -1,0 +1,17 @@
+import requests
+
+# Set up the API endpoint URL and the desired key to extract
+endpoint_url = 'http://my-ggr-endpoint.com/api'
+key_to_extract = 'status'
+
+# Make the API request and get the response
+response = requests.get(endpoint_url)
+
+# Parse the response JSON
+response_json = response.json()
+
+# Extract the desired key value
+key_value = response_json.get(key_to_extract)
+
+# Print the key value
+print(f"The {key_to_extract} is {key_value}")
