@@ -1,0 +1,25 @@
+import boto3
+
+# Set up a Boto3 client for EC2 and Autoscaling
+ec2_client = boto3.client('ec2')
+autoscaling_client = boto3.client('autoscaling')
+
+# Set the name of the Autoscaling Group you want to get instances for
+autoscaling_group_name = 'my-autoscaling-group'
+
+# Get the list of instances in the Autoscaling Group
+instances = autoscaling_client.describe_auto_scaling_groups(
+    AutoScalingGroupNames=[autoscaling_group_name]
+)['AutoScalingGroups'][0]['Instances']
+
+# Extract the instance IDs
+instance_ids = [instance['InstanceId'] for instance in instances]
+
+# Get the list of IP addresses for the instances
+response = ec2_client.describe_instances(InstanceIds=instance_ids)
+ip_addresses = [instance['PrivateIpAddress'] for reservation in response['Reservations'] for instance in reservation['Instances']]
+
+# Print the list of IP addresses
+print("Instance IP addresses:")
+for ip_address in ip_addresses:
+    print(ip_address)
