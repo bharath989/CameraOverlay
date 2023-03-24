@@ -1,0 +1,50 @@
+import boto3
+
+def describe_asg(asg_name):
+    """
+    Retrieve details about an Auto Scaling Group (ASG) in AWS.
+    :param asg_name: The name of the ASG to describe.
+    :return: A dictionary containing information about the ASG.
+    """
+    # Create a Boto3 client for interacting with the Auto Scaling service
+    client = boto3.client('autoscaling')
+    
+    # Use the describe_auto_scaling_groups() method to get details about the ASG
+    response = client.describe_auto_scaling_groups(
+        AutoScalingGroupNames=[asg_name]
+    )
+    
+    # Extract relevant information from the response
+    asg_details = response['AutoScalingGroups'][0]
+    asg_instances = asg_details['Instances']
+    asg_min_size = asg_details['MinSize']
+    asg_max_size = asg_details['MaxSize']
+    asg_desired_capacity = asg_details['DesiredCapacity']
+    
+    # Return a dictionary containing information about the ASG
+    return {
+        'name': asg_name,
+        'instances': asg_instances,
+        'min_size': asg_min_size,
+        'max_size': asg_max_size,
+        'desired_capacity': asg_desired_capacity
+    }
+
+def lambda_handler(event, context):
+    """
+    Retrieve details about an Auto Scaling Group (ASG) in AWS and log them to CloudWatch.
+    :param event: An AWS Lambda event.
+    :param context: The context in which the Lambda function is executing.
+    """
+    # Get the name of the ASG from the Lambda event input
+    asg_name = event['asg_name']
+    
+    # Retrieve details about the ASG
+    asg_details = describe_asg(asg_name)
+    
+    # Log the ASG details to CloudWatch
+    print(f"ASG Name: {asg_details['name']}")
+    print(f"Instances: {asg_details['instances']}")
+    print(f"Min Size: {asg_details['min_size']}")
+    print(f"Max Size: {asg_details['max_size']}")
+    print(f"Desired Capacity: {asg_details['desired_capacity']}")
