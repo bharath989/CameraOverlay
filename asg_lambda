@@ -1,0 +1,35 @@
+import boto3
+
+def lambda_handler(event, context):
+    """
+    Retrieve details about an Auto Scaling Group (ASG) in AWS.
+    :param event: The event data passed to the Lambda function (unused).
+    :param context: The runtime information provided by AWS (unused).
+    :return: A dictionary containing information about the ASG.
+    """
+    # Provide the name of the ASG you want to describe
+    asg_name = 'my-auto-scaling-group'
+
+    # Create a Boto3 client for interacting with the Auto Scaling service
+    client = boto3.client('autoscaling')
+    
+    # Use the describe_auto_scaling_groups() method to get details about the ASG
+    response = client.describe_auto_scaling_groups(
+        AutoScalingGroupNames=[asg_name]
+    )
+    
+    # Extract relevant information from the response
+    asg_details = response['AutoScalingGroups'][0]
+    asg_instances = asg_details['Instances']
+    asg_min_size = asg_details['MinSize']
+    asg_max_size = asg_details['MaxSize']
+    asg_desired_capacity = asg_details['DesiredCapacity']
+    
+    # Return a dictionary containing information about the ASG
+    return {
+        'name': asg_name,
+        'instances': asg_instances,
+        'min_size': asg_min_size,
+        'max_size': asg_max_size,
+        'desired_capacity': asg_desired_capacity
+    }
