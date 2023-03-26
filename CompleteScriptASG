@@ -1,0 +1,23 @@
+import boto3
+
+# Initialize Boto3 client
+client = boto3.client('autoscaling')
+
+# Get the list of instance IDs in the Auto Scaling Group
+response = client.describe_auto_scaling_instances()
+instance_ids = [instance['InstanceId'] for instance in response['AutoScalingInstances']]
+
+# Get the private IP address for each instance ID
+ec2 = boto3.resource('ec2')
+private_ips = []
+for instance_id in instance_ids:
+    instance = ec2.Instance(instance_id)
+    private_ips.append(instance.private_ip_address)
+
+# Define the array X
+X = ['10.0.0.1', '10.0.0.2', '10.0.0.3']
+
+# Check if the private IP address is in the array X
+for ip in private_ips:
+    if ip not in X:
+        print(f"IP {ip} is not existing")
