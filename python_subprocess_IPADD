@@ -1,0 +1,11 @@
+import subprocess
+
+# Set the desired hostname and count values
+hostname = "selenoid.example.com"
+count = "1"
+
+# Construct the sed command with variable values
+sed_cmd = r'sed -i "s/<region name=\\"1\\">/<region name=\\"1\\">\\n\\t\\t<host name=\\"{}\\" port=\\"4444\\" count=\\"{}\\\\"\\/>/g" file.xml'.format(hostname, count)
+
+# Execute the sed command using subprocess
+subprocess.call(sed_cmd, shell=True)
