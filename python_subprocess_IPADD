@@ -13,3 +13,7 @@ subprocess.call(sed_cmd, shell=True)
 
 
 sed_cmd = ['sed', '-i', '', 's/<region name=\\"1\\">/<region name=\\"1\\">\\n    <host name=\\"{}\\" port=\\"{}\\" count=\\"{}\\">,/g'.format(hostname, port, count), 'file.xml']
+
+hostname = "selenoid.example.com"
+port = "4444"
+count = "1"
