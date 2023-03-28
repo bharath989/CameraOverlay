@@ -9,3 +9,7 @@ sed_cmd = r'sed -i "s/<region name=\\"1\\">/<region name=\\"1\\">\\n\\t\\t<host 
 
 # Execute the sed command using subprocess
 subprocess.call(sed_cmd, shell=True)
+
+
+
+sed_cmd = ['sed', '-i', '', 's/<region name=\\"1\\">/<region name=\\"1\\">\\n    <host name=\\"{}\\" port=\\"{}\\" count=\\"{}\\">,/g'.format(hostname, port, count), 'file.xml']
