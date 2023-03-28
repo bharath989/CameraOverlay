@@ -1,40 +1,20 @@
-import subprocess
+from xml.dom import minidom
 
-# Set the desired hostname and count values
-hostname = "selenoid.example.com"
-count = "1"
-
-# Construct the sed command with variable values
-sed_cmd = r'sed -i "s/<region name=\\"1\\">/<region name=\\"1\\">\\n\\t\\t<host name=\\"{}\\" port=\\"4444\\" count=\\"{}\\\\"\\/>/g" file.xml'.format(hostname, count)
-
-# Execute the sed command using subprocess
-subprocess.call(sed_cmd, shell=True)
-
-
-
-sed_cmd = ['sed', '-i', '', 's/<region name=\\"1\\">/<region name=\\"1\\">\\n    <host name=\\"{}\\" port=\\"{}\\" count=\\"{}\\">,/g'.format(hostname, port, count), 'file.xml']
-
-hostname = "selenoid.example.com"
-port = "4444"
-count = "1"
-
-
-import xml.etree.ElementTree as ET
-
-# Open the XML file and parse it into an ElementTree object
-tree = ET.parse('file.xml')
+# Open the XML file and parse it into a minidom object
+doc = minidom.parse('file.xml')
 
 # Find the <region> element
-region_elem = tree.find('.//region')
+region_elem = doc.getElementsByTagName('region')[0]
 
 # Create a new <host> element with the desired attributes
-host_elem = ET.Element('host')
-host_elem.set('name', 'selenoid.example.com')
-host_elem.set('port', '4444')
-host_elem.set('count', '1')
+host_elem = doc.createElement('host')
+host_elem.setAttribute('name', 'selenoid.example.com')
+host_elem.setAttribute('port', '4444')
+host_elem.setAttribute('count', '1')
 
 # Insert the <host> element into the <region> element
-region_elem.append(host_elem)
+region_elem.appendChild(host_elem)
 
 # Write the updated tree to the original XML file
-tree.write('file.xml', encoding='utf-8', xml_declaration=True)
+with open('file.xml', 'w') as f:
+    doc.writexml(f, encoding='utf-8')
