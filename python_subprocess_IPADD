@@ -19,17 +19,19 @@ port = "4444"
 count = "1"
 
 
-
 import xml.etree.ElementTree as ET
 
 # Open the XML file and parse it into an ElementTree object
 tree = ET.parse('file.xml')
 
 # Find the <region> element
-region_elem = tree.find(".//region[@name='1']")
+region_elem = tree.find('.//region')
 
 # Create a new <host> element with the desired attributes
-host_elem = ET.Element('host', {'name': 'selenoid.example.com', 'port': '4444', 'count': '1'})
+host_elem = ET.Element('host')
+host_elem.set('name', 'selenoid.example.com')
+host_elem.set('port', '4444')
+host_elem.set('count', '1')
 
 # Insert the <host> element into the <region> element
 region_elem.append(host_elem)
