@@ -18,3 +18,45 @@ region_elem.appendChild(host_elem)
 # Write the updated tree to the original XML file
 with open('file.xml', 'w') as f:
     doc.writexml(f, encoding='utf-8')
+
+
+
+----------------------------------------------
+
+
+
+from xml.dom import minidom
+
+xml_file = 'path/to/your/xml/file.xml'
+ip_addresses = ['192.168.1.1', '192.168.1.2', '192.168.1.3']
+
+# Load the XML file into a DOM tree
+dom_tree = minidom.parse(xml_file)
+
+# Get the first region element (assuming there's only one in the file)
+region = dom_tree.getElementsByTagName('region')[0]
+
+# Check each IP address in the list
+for ip_address in ip_addresses:
+    # Find all host elements in the XML with a matching IP address
+    hosts = dom_tree.getElementsByTagName('host')
+    host_exists = False
+    for host in hosts:
+        if host.getAttribute('name') == ip_address:
+            host_exists = True
+            break
+
+    # If the IP address doesn't already exist in the XML, add it to the region element
+    if not host_exists:
+        new_host = dom_tree.createElement('host')
+        new_host.setAttribute('name', ip_address)
+        new_host.setAttribute('port', '4444')
+        new_host.setAttribute('count', '1')
+        region.appendChild(new_host)
+
+# Write the updated XML file back to disk
+with open(xml_file, 'w') as f:
+    dom_tree.writexml(f)
+
+
+----------------------------------------
