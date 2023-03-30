@@ -82,3 +82,23 @@ for host_element in host_elements:
 # write the updated XML back to the file
 with open(xml_path, "w") as f:
     f.write(doc.toprettyxml(indent="  "))
+    
+    
+----------------------------------------------------
+
+
+name_to_delete = "selenoid3.example.com"
+
+# parse the XML string
+doc = md.parseString(xml_str)
+
+# find all the 'host' elements in the document
+host_elements = doc.getElementsByTagName("host")
+
+# iterate through the host elements and delete the matching name
+for host_element in host_elements:
+    if host_element.getAttribute("name") == name_to_delete:
+        host_element.parentNode.removeChild(host_element)
+
+# print the updated XML string
+print(doc.toxml())
