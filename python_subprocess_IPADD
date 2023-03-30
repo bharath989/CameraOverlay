@@ -102,3 +102,22 @@ for host_element in host_elements:
 
 # print the updated XML string
 print(doc.toxml())
+
+
+
+----------------------------------------
+
+
+import requests
+
+url = 'https://api.example.com/status'
+response = requests.get(url)
+
+if response.status_code == 200:
+    data = response.json()
+    if data['total'] == 0 and data['used'] == 0:
+        print('hello world')
+    else:
+        print('Total: {}, Used: {}'.format(data['total'], data['used']))
+else:
+    print('No response')
