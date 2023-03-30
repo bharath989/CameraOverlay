@@ -60,3 +60,25 @@ with open(xml_file, 'w') as f:
 
 
 ----------------------------------------
+
+
+import xml.dom.minidom as md
+
+xml_path = "path/to/xml/file.xml"
+name_to_edit = "selenoid3.example.com"
+new_count = "0"
+
+# parse the XML file
+doc = md.parse(xml_path)
+
+# find all the 'host' elements in the document
+host_elements = doc.getElementsByTagName("host")
+
+# iterate through the host elements and update the count for the matching name
+for host_element in host_elements:
+    if host_element.getAttribute("name") == name_to_edit:
+        host_element.setAttribute("count", new_count)
+
+# write the updated XML back to the file
+with open(xml_path, "w") as f:
+    f.write(doc.toprettyxml(indent="  "))
