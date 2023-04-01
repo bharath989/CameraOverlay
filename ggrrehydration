@@ -1,0 +1,36 @@
+---
+- name: Insert IPs into XML file
+  hosts: localhost
+  gather_facts: no
+
+  vars:
+    ips: "10.0.0.1,10.0.0.2,10.0.0.3"
+    xml_file_path: "/path/to/xml/file.xml"
+
+  tasks:
+    - name: Read XML file
+      slurp:
+        src: "{{ xml_file_path }}"
+      register: xml_file_content
+
+    - name: Parse XML file
+      xml:
+        xmlstring: "{{ xml_file_content.content | b64decode }}"
+        xpath: "//region"
+      register: xml_tree
+
+    - name: Add IP nodes to XML tree
+      loop: "{{ ips.split(',') }}"
+      when: item | trim != ''
+      community.general.xml:
+        state: present
+        xpath: "/region/host[@name='{{ item }}']"
+        attribute: "count"
+        value: "1"
+        xmlstring: "{{ xml_tree.result.xmlstring }}"
+      register: xml_updated
+
+    - name: Write updated XML file
+      copy:
+        content: "{{ xml_updated.result.xmlstring }}"
+        dest: "{{ xml_file_path }}"
