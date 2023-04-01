@@ -1,71 +1,42 @@
+from xml.dom import minidom
+import sys
+
+def add_ip_to_xml(xml_file_path, ips):
+    # parse the XML file
+    xmldoc = minidom.parse(xml_file_path)
+
+    # get the region element
+    region = xmldoc.getElementsByTagName('region')[0]
+
+    # create a new host element for each IP and add it to the region
+    for ip in ips:
+        host = xmldoc.createElement('host')
+        host.setAttribute('name', ip)
+        host.setAttribute('port', '4444')
+        host.setAttribute('count', '1')
+        region.appendChild(host)
+
+    # write the modified XML back to the file
+    with open(xml_file_path, 'w') as f:
+        xmldoc.writexml(f)
+
+if __name__ == '__main__':
+    xml_file_path = sys.argv[1]
+    ips = sys.argv[2].split(',')
+    add_ip_to_xml(xml_file_path, ips)
+
+
+-------------------------
+
+
 ---
-- name: Insert IPs into XML file
+- name: Add IPs to XML
   hosts: localhost
   gather_facts: no
-
   vars:
-    ips: "10.0.0.1,10.0.0.2,10.0.0.3"
     xml_file_path: "/path/to/xml/file.xml"
-
+    ips: "192.168.1.10,192.168.1.11,192.168.1.12"
   tasks:
-    - name: Read XML file
-      slurp:
-        src: "{{ xml_file_path }}"
-      register: xml_file_content
-
-    - name: Parse XML file
-      xml:
-        xmlstring: "{{ xml_file_content.content | b64decode }}"
-        xpath: "//region"
-      register: xml_tree
-
-    - name: Add IP nodes to XML tree
-      loop: "{{ ips.split(',') }}"
-      when: item | trim != ''
-      community.general.xml:
-        state: present
-        xpath: "/region/host[@name='{{ item }}']"
-        attribute: "count"
-        value: "1"
-        xmlstring: "{{ xml_tree.result.xmlstring }}"
-      register: xml_updated
-
-    - name: Write updated XML file
-      copy:
-        content: "{{ xml_updated.result.xmlstring }}"
-        dest: "{{ xml_file_path }}"
-
-
-
-
-
-
-
----------------------------------------------------------
-
-#!/usr/bin/env python
-
-import sys
-import xml.dom.minidom as minidom
-
-# Get the IP addresses from the command line arguments
-ip_addresses = sys.argv[1].split(',')
-
-# Open the XML file
-xml_file = minidom.parse('/path/to/xml/file.xml')
-
-# Get all the host nodes in the XML file
-host_nodes = xml_file.getElementsByTagName('host')
-
-# Loop through the host nodes and update the count attribute
-for host_node in host_nodes:
-    if host_node.getAttribute('name') in ip_addresses:
-        if host_node.getAttribute('count') == '0':
-            host_node.setAttribute('count', '1')
-        else:
-            host_node.setAttribute('count', '0')
-
-# Write the updated XML back to the file
-with open('/path/to/xml/file.xml', 'w') as f:
-    xml_file.writexml(f)
-
+    - name: Run Python script to add IPs
+      command: >
+        python3 /path/to/python/script.py {{ xml_file_path }} {{ ips }}
