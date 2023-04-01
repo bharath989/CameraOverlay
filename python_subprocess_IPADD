@@ -121,3 +121,30 @@ if response.status_code == 200:
         print('Total: {}, Used: {}'.format(data['total'], data['used']))
 else:
     print('No response')
+
+
+
+
+---------------------------------------------
+
+
+import xml.dom.minidom as minidom
+
+# Load the XML file
+xml_path = "path/to/xml/file.xml"
+dom = minidom.parse(xml_path)
+
+# Get all the 'host' elements
+host_elements = dom.getElementsByTagName('host')
+
+# Loop through the 'host' elements and update the 'count' attribute
+for host_element in host_elements:
+    count = host_element.getAttribute('count')
+    if count == '1':
+        host_element.setAttribute('count', '0')
+    elif count == '0':
+        host_element.setAttribute('count', '1')
+
+# Save the updated XML to a file
+with open(xml_path, 'w') as f:
+    dom.writexml(f, encoding='utf-8')
