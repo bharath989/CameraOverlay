@@ -1,0 +1,28 @@
+import boto3
+
+def lambda_handler(event, context):
+    
+    ec2 = boto3.resource('ec2')
+    instances = ec2.instances.filter(Filters=[{'Name': 'tag:VSAD', 'Values': ['T7IV']}])
+    
+    for instance in instances:
+        cpu_utilization = get_cpu_utilization(instance.id)
+        if cpu_utilization < 5:
+            instance.stop()
+    
+def get_cpu_utilization(instance_id):
+    cloudwatch = boto3.client('cloudwatch')
+    response = cloudwatch.get_metric_statistics(
+        Namespace='AWS/EC2',
+        MetricName='CPUUtilization',
+        Dimensions=[{'Name': 'InstanceId', 'Value': instance_id}],
+        StartTime=(datetime.now() - timedelta(minutes=5)).isoformat(),
+        EndTime=datetime.now().isoformat(),
+        Period=60,
+        Statistics=['Average'],
+    )
+    datapoints = response['Datapoints']
+    if len(datapoints) > 0:
+        return datapoints[0]['Average']
+    else:
+        return 0
