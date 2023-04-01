@@ -43,29 +43,29 @@
 
 ---------------------------------------------------------
 
-import xml.dom.minidom
+#!/usr/bin/env python
+
+import sys
+import xml.dom.minidom as minidom
+
+# Get the IP addresses from the command line arguments
+ip_addresses = sys.argv[1].split(',')
 
 # Open the XML file
-xml_file = "/path/to/xml/file.xml"
-dom = xml.dom.minidom.parse(xml_file)
+xml_file = minidom.parse('/path/to/xml/file.xml')
 
-# Get the root element
-root = dom.documentElement
+# Get all the host nodes in the XML file
+host_nodes = xml_file.getElementsByTagName('host')
 
-# Create a new element for each IP address and add it to the XML
-ip_list = ["192.168.1.1", "192.168.1.2", "192.168.1.3"]
-for ip in ip_list:
-    ip_element = dom.createElement("ip")
-    ip_text = dom.createTextNode(ip)
-    ip_element.appendChild(ip_text)
-    root.appendChild(ip_element)
+# Loop through the host nodes and update the count attribute
+for host_node in host_nodes:
+    if host_node.getAttribute('name') in ip_addresses:
+        if host_node.getAttribute('count') == '0':
+            host_node.setAttribute('count', '1')
+        else:
+            host_node.setAttribute('count', '0')
 
-# Save the updated XML file
-with open(xml_file, "w") as f:
-    f.write(dom.toxml())
+# Write the updated XML back to the file
+with open('/path/to/xml/file.xml', 'w') as f:
+    xml_file.writexml(f)
 
-
----------------------------------------------
-
-- name: Insert IP addresses into XML using Python script
-  command: python3 insert_ips.py --ips 10.0.0.1,10.0.0.2,10.0.0.3
