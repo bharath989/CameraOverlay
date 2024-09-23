@@ -1,0 +1,45 @@
+import requests
+import json
+
+# Define your Cloudability API Key
+API_KEY = 'your_cloudability_api_key_here'
+
+# Define the Budget API endpoint URL
+BUDGETS_API_URL = "https://api.cloudability.com/v3/budgets"
+
+# Define headers
+headers = {
+    'Content-Type': 'application/json',
+    'Authorization': f'Bearer {API_KEY}',
+}
+
+# Define the budget data to post (sample data structure)
+budget_data = {
+    "name": "Sample Budget",
+    "currency_code": "USD",
+    "amount": 50000,
+    "time_period": {
+        "start_date": "2024-01-01",
+        "end_date": "2024-12-31"
+    },
+    "scope": {
+        "linked_account": "123456789012",
+        "service": "AmazonEC2"
+    },
+    "notifications": [
+        {
+            "type": "email",
+            "threshold": 80,
+            "recipients": ["user@example.com"]
+        }
+    ]
+}
+
+# Make the POST request to create the budget
+response = requests.post(BUDGETS_API_URL, headers=headers, data=json.dumps(budget_data))
+
+# Check the response status
+if response.status_code == 201:
+    print("Budget created successfully:", response.json())
+else:
+    print(f"Failed to create budget. Status code: {response.status_code}, Response: {response.text}")
