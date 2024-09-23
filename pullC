@@ -1,0 +1,25 @@
+import requests
+
+# Define your Cloudability API Key
+API_KEY = 'your_cloudability_api_key_here'
+
+# Define the Budgets API endpoint URL
+BUDGETS_API_URL = "https://api.cloudability.com/v3/budgets"
+
+# Define headers
+headers = {
+    'Authorization': f'Bearer {API_KEY}',
+    'Content-Type': 'application/json'
+}
+
+# Make the GET request to retrieve the budgets
+response = requests.get(BUDGETS_API_URL, headers=headers)
+
+# Check the response status
+if response.status_code == 200:
+    # Print the retrieved budgets
+    budgets = response.json()
+    print("Budgets retrieved successfully:")
+    print(budgets)
+else:
+    print(f"Failed to retrieve budgets. Status code: {response.status_code}, Response: {response.text}")
